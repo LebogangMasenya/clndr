@@ -1,15 +1,63 @@
-import {Component, inject} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import { Component, inject, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { calenderStore } from '../../calender-store/calender-store';
-
+import { DateService } from '../../services/date.service';
+import { isSameDay, isSameMonth, isToday, subYears } from 'date-fns';
 @Component({
     selector: 'monthly-view',
     imports: [CommonModule],
     template: `  
-        <div class="flex flex-column h-screen">
-        </div>`,
+        <div class="grid grid-cols-7 border-t border-l border-gray-300">
+                <div class="flex items-center justify-center py-2 border-b border-r border-gray-300" *ngFor="let dayLabel of daysLabels">
+                    <strong>{{ dayLabel }}</strong>
+                </div>
+            @for (day of calendarDays(); track day.date.toISOString()) {
+                <div [class.bg-slate-50]="!day.isCurrentMonth" 
+         class="h-32 border-r border-b border-slate-200 p-2">
+                   <span [class.bg-blue-600]="day.isToday" 
+            [class.text-white]="day.isToday"
+            class="inline-flex h-7 w-7 items-center justify-content-center rounded-full">
+        {{ day.date | date: 'd' }}
+      </span>
+
+                    @if (day.isHoliday) {
+                       <div class="mt-1 text-[10px] bg-red-50 text-red-700 px-1 rounded truncate">
+                            {{ day.holidayName }}
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+        `,
     styles: ``
 })
 export class MonthlyViewComponent {
     calendarStore = inject(calenderStore);
+    dateService = inject(DateService);
+
+    calendarDays = computed(() => { // listen to changes in state
+        const selectedDate = this.calendarStore.selectedDate();
+        const realDate = this.calendarStore.selectedDate();
+
+        //  (1 year ago)
+        const debugDate = subYears(realDate, 1);
+
+        const holidays = this.calendarStore.holidayList();
+
+        const monthDates = this.dateService.getMonthDates(debugDate);
+
+        return monthDates.map(date => {
+            const holiday = holidays.find(h => isSameDay(new Date(h.date), date));
+
+            return {
+                date,
+                isHoliday: !!holiday,
+                holidayName: holiday?.name || null,
+                isCurrentMonth: isSameMonth(date, selectedDate),
+                isToday: isToday(date)
+            };
+        });
+    });
+
+    daysLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 }

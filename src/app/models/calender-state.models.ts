@@ -1,8 +1,11 @@
+import { Holiday } from "./holiday.models";
+
 export interface CalenderState {
     currentView: 'month' | 'week' | 'day' | 'today';
     selectedDate: Date;
     events: CalenderEvent[]; 
     selectedEventId: string | null;
+    holidayList: Holiday[]; 
 }
 
 export interface CalenderEvent {
