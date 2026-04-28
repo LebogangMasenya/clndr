@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { calenderStore } from '../../calender-store/calender-store';
 import { DateService } from '../../services/date.service';
 import { isSameDay, isSameMonth, isToday, subYears } from 'date-fns';
+import { daysLabels } from '../../models/holiday.models';
 @Component({
     selector: 'monthly-view',
     imports: [CommonModule],
@@ -34,7 +35,7 @@ import { isSameDay, isSameMonth, isToday, subYears } from 'date-fns';
 export class MonthlyViewComponent {
     calendarStore = inject(calenderStore);
     dateService = inject(DateService);
-
+    daysLabels = daysLabels;
     calendarDays = computed(() => { // listen to changes in state
         const selectedDate = this.calendarStore.selectedDate();
         const realDate = this.calendarStore.selectedDate();
@@ -59,5 +60,4 @@ export class MonthlyViewComponent {
         });
     });
 
-    daysLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 }
