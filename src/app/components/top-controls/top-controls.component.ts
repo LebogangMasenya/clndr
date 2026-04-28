@@ -24,7 +24,8 @@ interface SearchResult {
     selector: 'top-controls',
     template: `
    <div class="card">
-            <p-menubar [model]="items" />
+    <h1>CLNDR.io</h1>
+    <p-menubar [model]="items" />
 
         <div> 
             <p-dialog header="Calendar Command Palette" [(visible)]="showCommandPaletteDialog" (onShow)="searchQuery.forceInput()" [modal]="true" [closable]="true" [style]="{width: '50vw'}">

@@ -1,10 +1,23 @@
 
 
-<main class="main">
-  <top-controls></top-controls>
-  <div class="content">
-    <nav-sidebar></nav-sidebar>
-    <event-view></event-view>
+<main class="flex h-screen w-full flex-col overflow-hidden bg-white text-gray-900"> 
+
+  <header class="h-14 border-b border-gray-200">
+      <top-controls></top-controls>
+  </header>
+
+  <div class="flex flex-1 overflow-hidden">
+    <aside class="w-64 border-r border-gray-200 overflow-y-auto"> 
+      <nav-sidebar></nav-sidebar>
+    </aside>
+   
+    <section class="flex-1 overflow-y-auto">
+      <main-view></main-view>
+    </section>
+    
+    <aside [class.hidden]="!selectedEventId()" class="w-80 border-l border-gray-200 overflow-y-auto">
+      <event-view></event-view>
+    </aside>
   </div>
 </main>
 
