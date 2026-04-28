@@ -31,5 +31,8 @@ export class DateService {
     return eachDayOfInterval({ start: monthStartWeekStart, end: monthEndWeekEnd });
   }
 
+  public createEvent() {
+    
+  }
   
 }
