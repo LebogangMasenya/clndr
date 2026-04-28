@@ -43,7 +43,7 @@ export const calenderStore = signalStore(
         displayLabel: computed(() => format(state.selectedDate(), 'MMMM yyyy'))
     })),
     withMethods((store) => ({
-        setView(view: 'month' | 'week' | 'day' | 'today') {
+        setView(view: 'month' | 'week' | 'day' | 'today' | 'year') {
             patchState(store, { currentView: view });
         },
         setSelectedDate(date: Date) {

@@ -1,7 +1,7 @@
 import { Holiday } from "./holiday.models";
 
 export interface CalenderState {
-    currentView: 'month' | 'week' | 'day' | 'today';
+    currentView: 'month' | 'week' | 'day' | 'today' | 'year';
     selectedDate: Date;
     events: CalenderEvent[]; 
     selectedEventId: string | null;

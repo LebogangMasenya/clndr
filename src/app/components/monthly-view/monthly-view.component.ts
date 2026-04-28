@@ -2,33 +2,46 @@ import { Component, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { calenderStore } from '../../calender-store/calender-store';
 import { DateService } from '../../services/date.service';
-import { isSameDay, isSameMonth, isToday, subYears } from 'date-fns';
+import { isSameDay, isSameMonth, isToday, subYears , format} from 'date-fns';
 import { daysLabels } from '../../models/holiday.models';
 @Component({
     selector: 'monthly-view',
     imports: [CommonModule],
     template: `  
-        <div class="grid grid-cols-7 border-t border-l border-gray-300">
-                <div class="flex items-center justify-center py-2 border-b border-r border-gray-300" *ngFor="let dayLabel of daysLabels">
-                    <strong>{{ dayLabel }}</strong>
-                </div>
-            @for (day of calendarDays(); track day.date.toISOString()) {
-                <div [class.bg-slate-50]="!day.isCurrentMonth" 
-         class="h-32 border-r border-b border-slate-200 p-2">
-                   <span [class.bg-blue-600]="day.isToday" 
-            [class.text-white]="day.isToday"
-            class="inline-flex h-7 w-7 items-center justify-content-center rounded-full">
-        {{ day.date | date: 'd' }}
-      </span>
+<div class="grid grid-cols-3 gap-6 p-4">
+    @for (month of yearData(); track month.monthName) {
+        <div class="flex flex-col">
+            <h3 class="text-lg font-bold mb-3 text-slate-800">{{ month.monthName }}</h3>
+            
+            <div class="grid grid-cols-7 text-[10px] font-bold text-slate-400 mb-1">
+                @for (label of daysLabels; track label) {
+                    <div class="text-center">{{ label.substring(0, 1) }}</div>
+                }
+            </div>
 
-                    @if (day.isHoliday) {
-                       <div class="mt-1 text-[10px] bg-red-50 text-red-700 px-1 rounded truncate">
-                            {{ day.holidayName }}
-                        </div>
-                    }
-                </div>
-            }
+            <div class="grid grid-cols-7 border-t border-l border-slate-100">
+                @for (day of month.days; track day.date.toISOString()) {
+                    <div 
+                        class="aspect-square border-r border-b border-slate-100 flex flex-col items-center justify-center relative"
+                        [class.bg-slate-50]="!day.isCurrentMonth">
+                        
+                        <span 
+                            [class.bg-blue-600]="day.isToday" 
+                            [class.text-white]="day.isToday"
+                            [class.opacity-25]="!day.isCurrentMonth"
+                            class="inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px]">
+                            {{ day.date | date: 'd' }}
+                        </span>
+
+                        @if (day.isHoliday && day.isCurrentMonth) {
+                            <div class="absolute bottom-0 w-1 h-1 bg-red-400 rounded-full"></div>
+                        }
+                    </div>
+                }
+            </div>
         </div>
+    }
+</div>
         `,
     styles: ``
 })
@@ -36,28 +49,32 @@ export class MonthlyViewComponent {
     calendarStore = inject(calenderStore);
     dateService = inject(DateService);
     daysLabels = daysLabels;
-    calendarDays = computed(() => { // listen to changes in state
-        const selectedDate = this.calendarStore.selectedDate();
+    
+    yearData = computed(() => {
         const realDate = this.calendarStore.selectedDate();
-
-        //  (1 year ago)
         const debugDate = subYears(realDate, 1);
-
+        const year = debugDate.getFullYear();
         const holidays = this.calendarStore.holidayList();
 
-        const monthDates = this.dateService.getMonthDates(debugDate);
-
-        return monthDates.map(date => {
-            const holiday = holidays.find(h => isSameDay(new Date(h.date), date));
+        // Generate data for each of the 12 months
+        return Array.from({ length: 12 }, (_, monthIndex) => {
+            const firstOfMonth = new Date(year, monthIndex, 1);
+            const monthDates = this.dateService.getMonthDates(firstOfMonth);
 
             return {
-                date,
-                isHoliday: !!holiday,
-                holidayName: holiday?.name || null,
-                isCurrentMonth: isSameMonth(date, selectedDate),
-                isToday: isToday(date)
+                monthName: format(firstOfMonth, 'MMMM'),
+                days: monthDates.map(date => {
+                    const holiday = holidays.find(h => isSameDay(new Date(h.date), date));
+                    return {
+                        date,
+                        isHoliday: !!holiday,
+                        holidayName: holiday?.name || null,
+                        // Important: Check if day belongs to THIS specific month index
+                        isCurrentMonth: date.getMonth() === monthIndex,
+                        isToday: isToday(date)
+                    };
+                })
             };
         });
     });
-
 }

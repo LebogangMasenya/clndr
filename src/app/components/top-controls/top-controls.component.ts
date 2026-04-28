@@ -212,7 +212,7 @@ export class TopControlsComponent {
 
 
     setView(view: string) {
-        this.CalenderStore.setView(view as 'month' | 'week' | 'day' | 'today');
+        this.CalenderStore.setView(view as 'month' | 'week' | 'day' | 'today' | 'year');
     }
 
     createNew() {
