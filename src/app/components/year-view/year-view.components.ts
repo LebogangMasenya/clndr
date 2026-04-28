@@ -10,11 +10,16 @@ import { daysLabels, monthsLabels } from '../../models/holiday.models';
     selector: 'year-view',
     imports: [CommonModule],
     template: `
+    <h1 class="text-xl font-bold mb-4 pl-4">2025</h1>
     <div class="grid grid-cols-3 gap-6 p-4">
         @for (month of yearData(); track month.monthName) {
             <div class="flex flex-col">
-                <h3 class="text-lg font-bold mb-3 text-slate-800">{{ month.monthName }}</h3>
-                
+                <h3 class="text-lg font-bold mb-3 text-slate-800" (click)="goToDateFromMonth(month.monthName)">
+                   <button class="bg-transparent border-none hover:underline text-lg font-bold mb-3 text-slate-800">
+                     {{ month.monthName }}
+                   </button>
+                </h3>
+
                 <div class="grid grid-cols-7 text-[10px] font-bold text-slate-400 mb-1">
                     @for (label of daysLabels; track label) {
                         <div class="text-center">{{ label.substring(0, 1) }}</div>
@@ -27,14 +32,18 @@ import { daysLabels, monthsLabels } from '../../models/holiday.models';
                             class="aspect-square border-r border-b border-slate-100 flex flex-col items-center justify-center relative"
                             [class.bg-slate-50]="!day.isCurrentMonth">
                             
+                            
                             <span 
                                 [class.bg-blue-600]="day.isToday" 
                                 [class.text-white]="day.isToday"
                                 [class.opacity-25]="!day.isCurrentMonth"
-                                class="inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px]">
-                                {{ day.date | date: 'd' }}
+                                (click)="goToDate(day.date)"
+                                class="inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px] ">
+                            
+                                    {{ day.date | date: 'd' }}
+                              
                             </span>
-
+                    
                             @if (day.isHoliday && day.isCurrentMonth) {
                                 <div class="absolute bottom-0 w-1 h-1 bg-red-400 rounded-full"></div>
                             }
@@ -79,5 +88,21 @@ export class YearViewComponent {
                    })
                };
            });
-       });
+    });
+
+    goToDateFromMonth(month: string) {
+        const monthIndex = monthsLabels.findIndex(m => m === month);
+        if (monthIndex !== -1) {
+            const year = this.calendarStore.selectedDate().getFullYear();
+            const date = new Date(year, monthIndex, 1);
+            this.calendarStore.setSelectedDate(date);
+            this.calendarStore.setView('month');
+        }
+    }
+
+    goToDate(date: Date) {
+        this.calendarStore.setSelectedDate(date);
+        this.calendarStore.setView('week');
+    }
+
 }

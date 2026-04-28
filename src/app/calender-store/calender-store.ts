@@ -18,7 +18,7 @@ import { computed, inject } from '@angular/core';
 
 const initialState: CalenderState = {
     currentView: 'month',
-    selectedDate: new Date(),
+    selectedDate: new Date(2025, 0, 1),
     events: [],
     selectedEventId: null,
     holidayList: []
@@ -47,6 +47,7 @@ export const calenderStore = signalStore(
             patchState(store, { currentView: view });
         },
         setSelectedDate(date: Date) {
+            date = new Date(2025, date.getMonth(), date.getDate());
             patchState(store, { selectedDate: date });
         },
         setSelectedEventId(eventId: string | null) {

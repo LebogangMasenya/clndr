@@ -8,7 +8,8 @@ import {CreateEventComponent} from '../create-modal/create-event.component';
 @Component({
     selector: 'monthly-view',
     imports: [CommonModule, CreateEventComponent],
-    template: `  
+    template: `              
+        <h1 class="text-xl font-bold">{{ calendarStore.selectedDate() | date: 'MMMM yyyy' }}</h1>
         <div class="grid grid-cols-7 border-t border-l border-gray-300">
             <div class="flex items-center justify-center py-2 border-b border-r border-gray-300" *ngFor="let dayLabel of daysLabels">
                 <strong>{{ dayLabel }}</strong>
@@ -20,6 +21,8 @@ import {CreateEventComponent} from '../create-modal/create-event.component';
                     class="inline-flex h-7 w-7 items-center justify-content-center rounded-full">
                         {{ day.date | date: 'd' }}
                         <button pButton label="New Event" class="p-button-sm   mt-2" (click)="showCreateModal = true"><i class="pi pi-plus"></i></button>
+                        <button (click)="goToDate(day.date)">wdw</button>
+
                     </span>
 
                     @if (day.isHoliday) {
@@ -68,4 +71,8 @@ export class MonthlyViewComponent {
         });
     });
 
+    goToDate(date: Date) {
+        this.calendarStore.setSelectedDate(date);
+        this.calendarStore.setView('week');
+    }
 }

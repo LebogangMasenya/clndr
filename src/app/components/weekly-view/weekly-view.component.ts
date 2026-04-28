@@ -11,6 +11,8 @@ import {CreateEventComponent} from '../create-modal/create-event.component';
     selector: 'weekly-view',
     imports: [CommonModule, CreateEventComponent],
     template: `  
+            <h1 class="text-xl font-bold">{{ calendarStore.selectedDate() | date: 'MMMM yyyy' }}</h1>
+
       <div class="flex h-full flex-col overflow-hidden bg-white">
     
         <div class="flex border-b border-slate-200 flex-none">
