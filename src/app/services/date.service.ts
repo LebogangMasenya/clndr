@@ -1,4 +1,5 @@
-import {Injectable} from '@angular/core';
+import {Injectable, inject} from '@angular/core';
+import {calenderStore} from '../calender-store/calender-store';
 import { 
   startOfMonth, 
   endOfMonth, 
@@ -11,6 +12,8 @@ import {
   providedIn: 'root'
 })
 export class DateService {
+  CalenderStore = inject(calenderStore);
+
   public getCurrentDate(): Date {
     return new Date();
   }
@@ -31,8 +34,14 @@ export class DateService {
     return eachDayOfInterval({ start: monthStartWeekStart, end: monthEndWeekEnd });
   }
 
-  public createEvent() {
-    
+  public createEvent(title: string, date: Date, description?: string) {
+    const newEvent = {
+      id: Math.random().toString(36).substr(2, 9), // Simple unique ID generator
+      title,
+      date,
+      description
+    };
+    this.CalenderStore.addEvent(newEvent);
   }
   
 }

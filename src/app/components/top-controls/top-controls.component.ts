@@ -11,7 +11,7 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { ButtonModule } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
 import { HostListener } from '@angular/core';
-
+import {CreateEventComponent} from '../create-modal/create-event.component';
 interface SearchResult {
     label: string;
     icon: string;
@@ -25,6 +25,7 @@ interface SearchResult {
     template: `
    <div class="card">
     <h1>CLNDR.io</h1>
+
     <p-menubar [model]="items" />
 
         <div class="flex justify-end gap-2 mt-4"> 
@@ -55,25 +56,11 @@ interface SearchResult {
                 </p-autocomplete>
             </p-dialog>
 
-            <p-dialog header="New Event" 
-                [(visible)]="showCreateModal" 
-                [modal]="true" 
-                appendTo="body"
-                >
-                <div class="flex flex-column gap-3">
-                    <div class="flex flex-column gap-2 ">
-                        <label for="title">Event Title</label>
-                        <input pInputText id="title" [(ngModel)]="newEvent.title" />
-                    </div>
-                    <div class="flex flex-column gap-2">
-                        <label for="date">Date</label>
-                        <p-datePicker id="date" [(ngModel)]="newEvent.date" appendTo="body"></p-datePicker>
-                    </div>
-                    <p-button label="Save Event" (onClick)="saveEvent()" icon="pi pi-check"></p-button>
-                </div>         
-            </p-dialog>
         </div>
-        </div>
+
+        <create-event [showCreateModal]="showCreateModal"></create-event>
+
+    </div>
   `,
     styles: `
     :host {
@@ -83,7 +70,7 @@ interface SearchResult {
       padding: 1rem;
     }
   `,
-    imports: [MenubarModule, DialogModule, AutoCompleteModule, DatePickerModule, ButtonModule, CommonModule, FormsModule],
+    imports: [MenubarModule, DialogModule, AutoCompleteModule, DatePickerModule, ButtonModule, CommonModule, FormsModule, CreateEventComponent],
     standalone: true
 
 })
