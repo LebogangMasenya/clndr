@@ -4,9 +4,10 @@ import { calenderStore } from '../../calender-store/calender-store';
 import { DateService } from '../../services/date.service';
 import { isSameDay, isSameMonth, isToday, subYears } from 'date-fns';
 import { daysLabels } from '../../models/holiday.models';
+import {CreateEventComponent} from '../create-modal/create-event.component';
 @Component({
     selector: 'monthly-view',
-    imports: [CommonModule],
+    imports: [CommonModule, CreateEventComponent],
     template: `  
         <div class="grid grid-cols-7 border-t border-l border-gray-300">
             <div class="flex items-center justify-center py-2 border-b border-r border-gray-300" *ngFor="let dayLabel of daysLabels">
@@ -18,6 +19,7 @@ import { daysLabels } from '../../models/holiday.models';
                     <span [class.bg-blue-600]="day.isToday" [class.text-white]="day.isToday"
                     class="inline-flex h-7 w-7 items-center justify-content-center rounded-full">
                         {{ day.date | date: 'd' }}
+                        <button pButton label="New Event" class="p-button-sm   mt-2" (click)="showCreateModal = true"><i class="pi pi-plus"></i></button>
                     </span>
 
                     @if (day.isHoliday) {
@@ -25,8 +27,13 @@ import { daysLabels } from '../../models/holiday.models';
                             {{ day.holidayName }}
                         </div>
                     }
+                    
+
                 </div>
             }
+
+        
+            <create-event [(showCreateModal)]="showCreateModal"></create-event>
         </div>
         `,
     styles: ``
@@ -35,6 +42,8 @@ export class MonthlyViewComponent {
     calendarStore = inject(calenderStore);
     dateService = inject(DateService);
     daysLabels = daysLabels;
+    showCreateModal = false;
+
     calendarDays = computed(() => { // listen to changes in state
         const selectedDate = this.calendarStore.selectedDate();
         const realDate = this.calendarStore.selectedDate();

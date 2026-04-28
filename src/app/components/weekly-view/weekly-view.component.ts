@@ -4,10 +4,12 @@ import { calenderStore } from '../../calender-store/calender-store';
 import { DateService } from '../../services/date.service';
 import { isSameDay, isSameMonth, isToday, subYears } from 'date-fns';
 import { daysLabels, timeLabels } from '../../models/holiday.models';
+import {CreateEventComponent} from '../create-modal/create-event.component';
+
 
 @Component({
     selector: 'weekly-view',
-    imports: [CommonModule],
+    imports: [CommonModule, CreateEventComponent],
     template: `  
       <div class="flex h-full flex-col overflow-hidden bg-white">
     
@@ -19,6 +21,8 @@ import { daysLabels, timeLabels } from '../../models/holiday.models';
                     <div class="flex flex-col items-center justify-center py-2 border-r border-slate-100 relative">
                         <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
                             {{ day.date | date: 'EEE' }}
+                            <button pButton label="New Event" class="p-button-sm   mt-2" (click)="showCreateModal = true"><i class="pi pi-plus"></i></button>
+
                         </span>
                         <span [class.bg-blue-600]="day.isToday" 
                                 [class.text-white]="day.isToday"
@@ -67,6 +71,8 @@ import { daysLabels, timeLabels } from '../../models/holiday.models';
                 </div>
             </div>
         </div>
+                    <create-event [(showCreateModal)]="showCreateModal"></create-event>
+
     </div>`,
     styles: ``
 })
@@ -75,7 +81,7 @@ export class WeeklyViewComponent {
     dateService = inject(DateService);
     daysLabels = daysLabels;
     timeLabels = timeLabels;
-
+    showCreateModal = false;
     calendarDays = computed(() => {
         const selectedDate = this.calendarStore.selectedDate();
         const realDate = this.calendarStore.selectedDate();

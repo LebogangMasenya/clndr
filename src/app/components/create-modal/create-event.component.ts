@@ -1,4 +1,4 @@
-import {Component, inject, Input} from '@angular/core';
+import {Component, inject, Input, Output, EventEmitter} from '@angular/core';
 import {calenderStore} from '../../calender-store/calender-store';
 import {DateService} from '../../services/date.service';
 import { DialogModule } from 'primeng/dialog';
@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import {ButtonModule} from 'primeng/button';
+
 @Component({
     selector: 'create-event',
     template: `
@@ -18,6 +19,7 @@ import {ButtonModule} from 'primeng/button';
             [(visible)]="showCreateModal" 
             [modal]="true" 
             appendTo="body"
+            closable="false"
             [style]="{width: '60vw', height: '20vh'}"
             >
             <div class="flex flex-column gap-3">
@@ -36,7 +38,7 @@ import {ButtonModule} from 'primeng/button';
                 </div>
 
                 <div class="flex justify-end gap-2 mt-4">
-                    <button pButton label="Cancel" class="p-button-secondary" (click)="showCreateModal = false"></button>
+                    <button pButton label="Cancel" class="p-button-secondary" (click)="closeModal()"></button>
                     <button pButton label="Save" (click)="saveEvent()"></button>
                 </div>
             </div>
@@ -56,6 +58,7 @@ import {ButtonModule} from 'primeng/button';
 })
 export class CreateEventComponent {
     @Input() showCreateModal: boolean = false;
+    @Output() showCreateModalChange = new EventEmitter<boolean>();
     CalenderStore = inject(calenderStore);
     DateService = inject(DateService);
     messageService = inject(MessageService);
@@ -76,5 +79,11 @@ export class CreateEventComponent {
         this.DateService.createEvent(this.newEvent.title, this.newEvent.date, this.newEvent.description);
         this.showCreateModal = false;
         this.newEvent = { title: '', date: new Date(), description: '' };
+        this.showCreateModalChange.emit(this.showCreateModal);
+    }
+
+    closeModal() {
+        this.showCreateModal = false;
+        this.showCreateModalChange.emit(this.showCreateModal);
     }
 }

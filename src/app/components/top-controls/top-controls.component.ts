@@ -58,7 +58,7 @@ interface SearchResult {
 
         </div>
 
-        <create-event [showCreateModal]="showCreateModal"></create-event>
+        <create-event [(showCreateModal)]="showCreateModal"></create-event>
 
     </div>
   `,
