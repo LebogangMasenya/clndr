@@ -1,15 +1,15 @@
 import { Component, Input, inject } from '@angular/core';
-import {CommonModule} from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { MenubarModule } from 'primeng/menubar';
 import { MenuItem } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { AutoCompleteCompleteEvent, AutoCompleteModule } from 'primeng/autocomplete';
 import { HolidayService } from '../../services/holiday.service';
-import {Holiday} from '../../models/holiday.models';
-import {calenderStore} from '../../calender-store/calender-store';
+import { Holiday } from '../../models/holiday.models';
+import { calenderStore } from '../../calender-store/calender-store';
 import { DatePickerModule } from 'primeng/datepicker';
-import {ButtonModule} from 'primeng/button';
-import {FormsModule} from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { FormsModule } from '@angular/forms';
 import { HostListener } from '@angular/core';
 
 interface SearchResult {
@@ -27,8 +27,8 @@ interface SearchResult {
     <h1>CLNDR.io</h1>
     <p-menubar [model]="items" />
 
-        <div> 
-            <p-dialog header="Calendar Command Palette" [(visible)]="showCommandPaletteDialog" [modal]="true" [closable]="true" [style]="{width: '50vw'}">
+        <div class="flex justify-end gap-2 mt-4"> 
+            <p-dialog header="Calendar Command Palette" [(visible)]="showCommandPaletteDialog" appendTo="body" [modal]="true" [closable]="true" [style]="{width: '50vw', height: '30vh'}">
             <p>Search your calendar</p>
                 <p-autocomplete 
                     #searchQuery
@@ -36,6 +36,7 @@ interface SearchResult {
                     [suggestions]="suggestedItems" 
                     (completeMethod)="search($event)"
                     optionLabel="label"
+                    (onSelect)="handleCommandSelect($event)"
                     placeholder="Type a command or search events..."
                     [style]="{'width':'100%'}"
                     [inputStyle]="{'width':'100%'}">
@@ -57,9 +58,10 @@ interface SearchResult {
             <p-dialog header="New Event" 
                 [(visible)]="showCreateModal" 
                 [modal]="true" 
-                [style]="{width: '400px'}">
+                appendTo="body"
+                >
                 <div class="flex flex-column gap-3">
-                    <div class="flex flex-column gap-2">
+                    <div class="flex flex-column gap-2 ">
                         <label for="title">Event Title</label>
                         <input pInputText id="title" [(ngModel)]="newEvent.title" />
                     </div>
@@ -135,7 +137,7 @@ export class TopControlsComponent {
             }
         },
         {
-            label: "Command",
+            label: "⌘K Command Palette",
             icon: "pi pi-fw pi-cog",
             shortcut: '⌘K',
             command: () => {
@@ -148,7 +150,7 @@ export class TopControlsComponent {
         title: '',
         date: new Date()
     };
-    
+
     saveEvent() {
         const eventToAdd = {
             id: Math.random().toString(36).substring(2, 9), // Simple unique ID generator
@@ -165,11 +167,20 @@ export class TopControlsComponent {
         this.showCommandPaletteDialog = true;
     }
 
+    openCreateModal() {
+        this.showCommandPaletteDialog = false;
+
+        // 2. Wait for the palette to start closing before opening the next one
+        setTimeout(() => {
+            this.showCreateModal = true;
+        }, 100); // 100ms is usually enough to clear the focus lock
+    }
+
     search(event: AutoCompleteCompleteEvent) {
         const query = event.query.toLowerCase();
         const allOptions: SearchResult[] = [
             // 1. Static Commands
-            { label: 'Create New Event', category: 'Action', icon: 'pi-plus', action: () => this.createNew() },
+            { label: 'Create New Event', category: 'Action', icon: 'pi-plus', action: () => this.openCreateModal() },
             { label: 'Switch to Month View', category: 'Action', icon: 'pi-table', action: () => this.setView('month') },
             { label: 'Switch to Week View', category: 'Action', icon: 'pi-list', action: () => this.setView('week') },
             { label: 'Switch to Day View', category: 'Action', icon: 'pi-calendar', action: () => this.setView('day') },
@@ -193,9 +204,16 @@ export class TopControlsComponent {
     }
 
 
+    handleCommandSelect(event: { value: SearchResult }) {
+        if (event.value && event.value.action) {
+            event.value.action(); // This calls this.openCreateModal()
+        }
+    }
+
+
     setView(view: string) {
         this.CalenderStore.setView(view as 'month' | 'week' | 'day' | 'today');
-    }   
+    }
 
     createNew() {
         this.CalenderStore.addEvent({ id: 'new', title: 'New Event', date: new Date() });
