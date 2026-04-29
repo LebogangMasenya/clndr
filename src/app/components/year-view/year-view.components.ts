@@ -63,10 +63,10 @@ export class YearViewComponent {
     
 
    yearData = computed(() => {
-           const realDate = this.calendarStore.selectedDate();
+           const realDate = this.calendarStore.selectedDateLabel();
            const debugDate = subYears(realDate, 1);
            const year = debugDate.getFullYear();
-           const holidays = this.calendarStore.holidayList();
+           const holidays = this.calendarStore.holidayListObject();
    
            // Generate data for each of the 12 months
            return Array.from({ length: 12 }, (_, monthIndex) => {

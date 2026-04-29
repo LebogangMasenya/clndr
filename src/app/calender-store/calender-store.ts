@@ -32,11 +32,11 @@ export const calenderStore = signalStore(
     })),
     withEntities<CalenderEvent>(),
     withComputed((state) => ({
-        currentView: state.currentView,
-        selectedDate: state.selectedDate,
-        events: state.events,
-        selectedEventId: state.selectedEventId,
-        holidayList: state.holidayList,
+        currentViewLabel: state.currentView,
+        selectedDateLabel: state.selectedDate,
+        eventsLabel: state.events,
+        selectedEventIdLabel: state.selectedEventId,
+        holidayListObject: state.holidayList,
         monthName: computed(() => format(state.selectedDate(), 'MMMM')), // "January"
         yearLabel: computed(() => format(state.selectedDate(), 'yyyy')), // "2026"
         dayNumber: computed(() => format(state.selectedDate(), 'do')),   // "1st", "2nd"

@@ -50,13 +50,13 @@ export class MonthlyViewComponent {
     showCreateModal = false;
 
     calendarDays = computed(() => { // listen to changes in state
-        const selectedDate = this.calendarStore.selectedDate();
-        const realDate = this.calendarStore.selectedDate();
+        const selectedDate = this.calendarStore.selectedDateLabel();
+        const realDate = this.calendarStore.selectedDateLabel();
 
         //  (1 year ago)
         const debugDate = subYears(realDate, 1);
 
-        const holidays = this.calendarStore.holidayList();
+        const holidays = this.calendarStore.holidayListObject();
 
         const monthDates = this.dateService.getMonthDates(debugDate);
 

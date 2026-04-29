@@ -69,11 +69,7 @@ interface SearchResult {
     </div>
   `,
     styles: `
-        :host {
-            display: block;
-            width: 100%;
-           height: 100%;
-        }
+      
         /* Remove PrimeNG's default padding and borders from the menubar component */
         ::ng-deep .p-menubar {
             padding: 0;
@@ -170,10 +166,7 @@ export class TopControlsComponent {
     openCreateModal() {
         this.showCommandPaletteDialog = false;
 
-        // 2. Wait for the palette to start closing before opening the next one
-        setTimeout(() => {
-            this.showCreateModal = true;
-        }, 100); // 100ms is usually enough to clear the focus lock
+        this.showCreateModal = true;
     }
 
     search(event: AutoCompleteCompleteEvent) {
@@ -227,12 +220,18 @@ export class TopControlsComponent {
     handleKeyboardEvent(event: KeyboardEvent) {
         // Check for Cmd + K (Mac) or Ctrl + K (Windows/Linux)
         const isKPressed = event.key.toLowerCase() === 'k';
+        const isIPressed = event.key.toLowerCase() === 'i';
         const isModifierPressed = event.metaKey || event.ctrlKey;
 
         if (isModifierPressed && isKPressed) {
             event.preventDefault(); // Stop the browser from opening its own search/address bar
             this.openCommandPalette();
         }
+          if (isModifierPressed && isIPressed) {
+            event.preventDefault(); // Stop the browser from opening its own search/address bar
+            this.openCreateModal();
+        }
+
 
         if (event.key === 'Escape' && this.showCommandPaletteDialog) {
             this.showCommandPaletteDialog = false;
