@@ -16,14 +16,13 @@ import {CreateEventComponent} from '../create-modal/create-event.component';
             </div>
             
             @for (day of calendarDays(); track day.date.toISOString()) {
-                <div [class.bg-slate-50]="!day.isCurrentMonth" class="h-32 border-r border-b border-slate-200 p-2">
-                    <span [class.bg-blue-600]="day.isToday" [class.text-white]="day.isToday"
+                <div [class.bg-slate-50]="!day.isCurrentMonth" class="h-32 border-r border-b border-slate-200 p-2 container">
+                    <span (click)="goToDate(day.date)" [class.bg-blue-600]="day.isToday" [class.text-white]="day.isToday"
                     class="inline-flex h-7 w-7 items-center justify-content-center rounded-full">
                         {{ day.date | date: 'd' }}
-                        <button pButton label="New Event" class="p-button-sm   mt-2" (click)="showCreateModal = true"><i class="pi pi-plus"></i></button>
-                        <button (click)="goToDate(day.date)">wdw</button>
-
                     </span>
+
+                    <button pButton label="New Event" class="p-button-sm  hover-button  mt-2" (click)="showCreateModal = true"><i class="pi pi-plus"></i></button>
 
                     @if (day.isHoliday) {
                         <div class="mt-1 text-[10px] bg-red-50 text-red-700 px-1 rounded truncate">
@@ -46,7 +45,18 @@ import {CreateEventComponent} from '../create-modal/create-event.component';
         </div>        
     </div>
         `,
-    styles: ``
+    styles: `
+.hover-button {
+  visibility: hidden;
+}
+
+.container:hover .hover-button {
+  visibility: visible;
+}
+
+
+    
+    `
 })
 export class MonthlyViewComponent {
     calendarStore = inject(calenderStore);

@@ -20,12 +20,14 @@ import {CreateEventComponent} from '../create-modal/create-event.component';
             
             <div class="grid flex-1 grid-cols-7">
                 @for (day of calendarDays(); track day.date.toISOString()) {
-                    <div class="flex flex-col items-center justify-center py-2 border-r border-slate-100 relative">
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                    <div class="flex flex-col items-center justify-center py-2 border-r border-slate-100 relative label">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider ">
                             {{ day.date | date: 'EEE' }}
-                            <button pButton label="New Event" class="p-button-sm   mt-2" (click)="showCreateModal = true"><i class="pi pi-plus"></i></button>
 
                         </span>
+
+                        <button pButton label="New Event" class="p-button-sm  hover-button  mt-2" (click)="showCreateModal = true"><i class="pi pi-plus"></i></button>
+
                         <span [class.bg-blue-600]="day.isToday" 
                                 [class.text-white]="day.isToday"
                                 class="mt-1 inline-flex h-8 w-8 items-center justify-center rounded-full text-lg font-medium">
@@ -83,7 +85,16 @@ import {CreateEventComponent} from '../create-modal/create-event.component';
                     <create-event [(showCreateModal)]="showCreateModal"></create-event>
 
     </div>`,
-    styles: ``
+    styles: `
+    .hover-button {
+  visibility: hidden;
+}
+
+.label:hover .hover-button {
+  visibility: visible;
+}
+
+    `
 })
 export class WeeklyViewComponent {
     calendarStore = inject(calenderStore);
