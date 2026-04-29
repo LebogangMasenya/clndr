@@ -23,52 +23,73 @@ interface SearchResult {
 @Component({
     selector: 'top-controls',
     template: `
-   <div class="card">
-    <h1>CLNDR.io</h1>
+   <div class="flex items-center justify-between p-4 bg-gray-100 border-b w-full">
+    <div class="flex items-center gap-2">
+        <h1 class="text-xl font-black tracking-tighter text-blue-600">CLNDR.io</h1>
+    </div>
 
-    <p-menubar [model]="items" />
+    <div class="flex-1 px-6">
+        <p-menubar [model]="items" />
+    </div>
 
-        <div class="flex justify-end gap-2 mt-4"> 
-            <p-dialog header="Calendar Command Palette" [(visible)]="showCommandPaletteDialog" appendTo="body" [modal]="true" [closable]="true" [style]="{width: '50vw', height: '30vh'}">
-            <p>Search your calendar</p>
-                <p-autocomplete 
-                    #searchQuery
-                    [(ngModel)]="value" 
-                    [suggestions]="suggestedItems" 
-                    (completeMethod)="search($event)"
-                    optionLabel="label"
-                    (onSelect)="handleCommandSelect($event)"
-                    placeholder="Type a command or search events..."
-                    [style]="{'width':'100%'}"
-                    [inputStyle]="{'width':'100%'}">
-                    
-                    <ng-template let-item pTemplate="item">
-                        <div class="flex align-items-center justify-content-between w-full">
-                            <div>
-                                <i [className]="'pi ' + item.icon + ' mr-2'"></i>
-                                <span>{{ item.label }}</span>
-                            </div>
-                            <small class="text-secondary" style="font-size: 0.7rem; text-transform: uppercase;">
-                                {{ item.category }}
-                            </small>
-                        </div>
-                    </ng-template>
-                </p-autocomplete>
-            </p-dialog>
-
+    <div class="flex items-center gap-3">
+        <p-button icon="pi pi-search" [text]="true" (onClick)="openCommandPalette()"> <span class="text-xs">⌘K</span> </p-button>
+        <div class="hidden">
+            <create-event [(showCreateModal)]="showCreateModal"></create-event>
         </div>
+    </div>
 
-        <create-event [(showCreateModal)]="showCreateModal"></create-event>
+    <p-dialog header="Calendar Command Palette" [(visible)]="showCommandPaletteDialog" appendTo="body" [modal]="true" [closable]="true" [style]="{width: '50vw', height: '30vh'}">
+        <p-autocomplete 
+            #searchQuery
+            [(ngModel)]="value" 
+            [suggestions]="suggestedItems" 
+            (completeMethod)="search($event)"
+            optionLabel="label"
+            (onSelect)="handleCommandSelect($event)"
+            placeholder="Type a command or search events..."
+            [style]="{'width':'100%'}"
+            [inputStyle]="{'width':'100%'}">
+            
+            <ng-template let-item pTemplate="item">
+                <div class="flex align-items-center justify-content-between w-full">
+                    <div>
+                        <i [className]="'pi ' + item.icon + ' mr-2'"></i>
+                        <span>{{ item.label }}</span>
+                    </div>
+                    <small class="text-secondary" style="font-size: 0.7rem; text-transform: uppercase;">
+                        {{ item.category }}
+                    </small>
+                </div>
+            </ng-template>
+        </p-autocomplete>
+    </p-dialog>
+
 
     </div>
   `,
     styles: `
-    :host {
-      display: block;
-      width: 200px;
-      background-color: #f0f0f0;
-      padding: 1rem;
-    }
+        :host {
+            display: block;
+            width: 100%;
+           height: 100%;
+        }
+        /* Remove PrimeNG's default padding and borders from the menubar component */
+        ::ng-deep .p-menubar {
+            padding: 0;
+            border: none;
+            background: transparent;
+        }
+
+        ::ng-deep .p-menubar .p-menuitem-link {
+            color: #333 !important;
+            padding: 0.5rem 1rem;
+        }
+
+        ::ng-deep .p-menubar .p-menuitem-link:hover {
+            background: rgba(0, 0, 0, 0.04) !important;
+            border-radius: 6px;
+        }
   `,
     imports: [MenubarModule, DialogModule, AutoCompleteModule, DatePickerModule, ButtonModule, CommonModule, FormsModule, CreateEventComponent],
     standalone: true
@@ -121,14 +142,6 @@ export class TopControlsComponent {
             icon: 'pi pi-fw pi-calendar',
             command: () => {
                 this.setView('today');
-            }
-        },
-        {
-            label: "⌘K Command Palette",
-            icon: "pi pi-fw pi-cog",
-            shortcut: '⌘K',
-            command: () => {
-                this.openCommandPalette();
             }
         }
     ];

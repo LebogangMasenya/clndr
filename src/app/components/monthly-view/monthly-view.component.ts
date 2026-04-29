@@ -36,8 +36,10 @@ import {CreateEventComponent} from '../create-modal/create-event.component';
             }
 
         
+        <div class="hidden">
             <create-event [(showCreateModal)]="showCreateModal"></create-event>
-        </div>
+        </div>        
+    </div>
         `,
     styles: ``
 })
