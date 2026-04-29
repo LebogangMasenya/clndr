@@ -31,6 +31,11 @@ import {CreateEventComponent} from '../create-modal/create-event.component';
                         </div>
                     }
                     
+                    @if(day.hasEvent) {
+                        <div class="mt-1 text-[10px] bg-green-50 text-green-700 px-1 rounded truncate">
+                          <button (click)="selectEvent(day.eventID || ' ')"> {{ day.eventTitle }} </button>
+                        </div>
+                    }
 
                 </div>
             }
@@ -53,22 +58,22 @@ export class MonthlyViewComponent {
         const selectedDate = this.calendarStore.selectedDateLabel();
         const realDate = this.calendarStore.selectedDateLabel();
 
-        //  (1 year ago)
-        const debugDate = subYears(realDate, 1);
-
         const holidays = this.calendarStore.holidayListObject();
-
-        const monthDates = this.dateService.getMonthDates(debugDate);
+        const events = this.calendarStore.entities();
+        const monthDates = this.dateService.getMonthDates(realDate);
 
         return monthDates.map(date => {
             const holiday = holidays.find(h => isSameDay(new Date(h.date), date));
-
+            const event = events.find(e => isSameDay(new Date(e.date), date));
             return {
                 date,
                 isHoliday: !!holiday,
                 holidayName: holiday?.name || null,
                 isCurrentMonth: isSameMonth(date, selectedDate),
-                isToday: isToday(date)
+                isToday: isToday(date),
+                hasEvent: !!event,
+                eventTitle: event?.title || null,
+                eventID : event?.id || null
             };
         });
     });
@@ -76,5 +81,9 @@ export class MonthlyViewComponent {
     goToDate(date: Date) {
         this.calendarStore.setSelectedDate(date);
         this.calendarStore.setView('week');
+    }
+
+    selectEvent(id: string) {
+        this.calendarStore.setSelectedEventId(id);
     }
 }

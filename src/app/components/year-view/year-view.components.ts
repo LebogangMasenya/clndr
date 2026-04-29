@@ -47,6 +47,11 @@ import { daysLabels, monthsLabels } from '../../models/holiday.models';
                             @if (day.isHoliday && day.isCurrentMonth) {
                                 <div class="absolute bottom-0 w-1 h-1 bg-red-400 rounded-full"></div>
                             }
+                            
+                            @if(day.hasEvent) {
+                                <div class="absolute bottom-0  bg-blue-600 w-1 h-1 px-1 rounded-full">
+                                </div>
+                            }
                         </div>
                     }
                 </div>
@@ -60,34 +65,41 @@ export class YearViewComponent {
     calendarStore = inject(calenderStore);
     dateService = inject(DateService);
     daysLabels = daysLabels;
-    
 
-   yearData = computed(() => {
-           const realDate = this.calendarStore.selectedDateLabel();
-           const debugDate = subYears(realDate, 1);
-           const year = debugDate.getFullYear();
-           const holidays = this.calendarStore.holidayListObject();
-   
-           // Generate data for each of the 12 months
-           return Array.from({ length: 12 }, (_, monthIndex) => {
-               const firstOfMonth = new Date(year, monthIndex, 1);
-               const monthDates = this.dateService.getMonthDates(firstOfMonth);
-   
-               return {
-                   monthName: format(firstOfMonth, 'MMMM'),
-                   days: monthDates.map(date => {
-                       const holiday = holidays.find(h => isSameDay(new Date(h.date), date));
-                       return {
-                           date,
-                           isHoliday: !!holiday,
-                           holidayName: holiday?.name || null,
-                           // Important: Check if day belongs to THIS specific month index
-                           isCurrentMonth: date.getMonth() === monthIndex,
-                           isToday: isToday(date)
-                       };
-                   })
-               };
-           });
+
+    yearData = computed(() => {
+        const realDate = this.calendarStore.selectedDateLabel();
+
+        const year = realDate.getFullYear();
+        const holidays = this.calendarStore.holidayListObject();
+        const events = this.calendarStore.entities();
+
+        // Generate data for each of the 12 months
+        return Array.from({ length: 12 }, (_, monthIndex) => {
+            const firstOfMonth = new Date(year, monthIndex, 1);
+            const monthDates = this.dateService.getMonthDates(firstOfMonth);
+
+            return {
+                monthName: format(firstOfMonth, 'MMMM'),
+                days: monthDates.map(date => {
+                    const holiday = holidays.find(h => isSameDay(new Date(h.date), date));
+                    const event = events.find(e => isSameDay(new Date(e.date), date));
+
+                    return {
+                        date,
+                        isHoliday: !!holiday,
+                        holidayName: holiday?.name || null,
+                        // Important: Check if day belongs to THIS specific month index
+                        isCurrentMonth: date.getMonth() === monthIndex,
+                        isToday: isToday(date),
+                        hasEvent: !!event,
+                        eventTitle: event?.title || null,
+                        eventID: event?.id || null
+
+                    };
+                })
+            };
+        });
     });
 
     goToDateFromMonth(month: string) {
@@ -105,4 +117,5 @@ export class YearViewComponent {
         this.calendarStore.setView('week');
     }
 
+  
 }

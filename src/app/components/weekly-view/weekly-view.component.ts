@@ -37,6 +37,13 @@ import {CreateEventComponent} from '../create-modal/create-event.component';
                             {{ day.holidayName }}
                             </div>
                         }
+
+                        @if(day.hasEvent) {
+                            <div class="mt-1 text-[10px] bg-green-50 text-green-700 px-1 rounded truncate">
+                                <button (click)="selectEvent(day.eventID || ' ')"> {{ day.eventTitle }} </button>
+                            </div>
+                        }
+
                     </div>
                 }
             </div>
@@ -88,21 +95,24 @@ export class WeeklyViewComponent {
         const selectedDate = this.calendarStore.selectedDate();
         const realDate = this.calendarStore.selectedDate();
 
-        const debugDate = subYears(realDate, 1);
 
         const holidays = this.calendarStore.holidayList();
-
-        const weekDates = this.dateService.getWeekDates(debugDate);
+        const events = this.calendarStore.entities();
+        const weekDates = this.dateService.getWeekDates(realDate);
 
         return weekDates.map(date => {
             const holiday = holidays.find(h => isSameDay(new Date(h.date), date));
+            const event = events.find(e => isSameDay(new Date(e.date), date));
 
             return {
                 date,
                 isHoliday: !!holiday,
                 holidayName: holiday?.name || null,
                 isCurrentMonth: isSameMonth(date, selectedDate),
-                isToday: isToday(date)
+                isToday: isToday(date),
+                hasEvent: !!event,
+                eventTitle: event?.title || null,
+                eventID : event?.id || null
             };
         });
     });
@@ -116,5 +126,9 @@ export class WeeklyViewComponent {
         // Position = (Hours * Height) + (Minutes * (Height / 60))
         const paddingOffset = 8;
         return (hours * this.HOUR_HEIGHT) + (minutes * (this.HOUR_HEIGHT / 60)) + paddingOffset;
+    }
+
+    selectEvent(id: string) {
+        this.calendarStore.setSelectedEventId(id);
     }
 }

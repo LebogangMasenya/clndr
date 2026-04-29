@@ -19,7 +19,6 @@ import { computed, inject } from '@angular/core';
 const initialState: CalenderState = {
     currentView: 'month',
     selectedDate: new Date(2025, 0, 1),
-    events: [],
     selectedEventId: null,
     holidayList: []
 };
@@ -34,8 +33,8 @@ export const calenderStore = signalStore(
     withComputed((state) => ({
         currentViewLabel: state.currentView,
         selectedDateLabel: state.selectedDate,
-        eventsLabel: state.events,
         selectedEventIdLabel: state.selectedEventId,
+        eventsLabel: state.entities,
         holidayListObject: state.holidayList,
         monthName: computed(() => format(state.selectedDate(), 'MMMM')), // "January"
         yearLabel: computed(() => format(state.selectedDate(), 'yyyy')), // "2026"
