@@ -2,14 +2,36 @@ import { Component, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { calenderStore } from '../../calender-store/calender-store';
 import { DateService } from '../../services/date.service';
-import { isSameDay, isSameMonth, isToday, subYears } from 'date-fns';
+import { isSameDay, isSameMonth, isToday, subYears, subMonths, addMonths } from 'date-fns';
 import { daysLabels } from '../../models/holiday.models';
+import { Button, ButtonDirective } from "primeng/button";
+import { ButtonModule } from 'primeng/button';
+
 
 @Component({
   selector: 'nav-sidebar',
   template: `
   @if (view() === 'week') {
-    <div class="w-full p-2 bg-white">
+    <div class="w-full p-2 bg-blue-600">
+<div class="flex items-center gap-1 text-amber-300 p-1 rounded-md border border-slate-200/60">
+    <p-button 
+        icon="pi pi-chevron-left" 
+        (onClick)="goToPrevMonth()"
+        [text]="true" 
+        [plain]="true"
+        severity="secondary"
+        styleClass="h-7 w-7 p-0 hover:bg-white hover:shadow-sm transition-all"
+    ></p-button>
+
+    <p-button 
+        icon="pi pi-chevron-right" 
+        (onClick)="goToNextMonth()"
+        [text]="true" 
+        [plain]="true"
+        severity="secondary"
+        styleClass="h-7 w-7 p-0 hover:bg-white hover:shadow-sm transition-all"
+    ></p-button>
+</div>
       <div class="flex items-center justify-between mb-2 px-1">
         <span class="text-sm font-semibold text-slate-700">
           {{ calendarStore.selectedDate() | date: 'MMMM yyyy' }}
@@ -81,7 +103,7 @@ import { daysLabels } from '../../models/holiday.models';
       padding: 1rem;
     }
   `,
-  imports: [CommonModule],
+  imports: [CommonModule, ButtonModule, ButtonDirective],
 
 })
 export class NavSidebarComponent {
@@ -117,5 +139,17 @@ export class NavSidebarComponent {
   goToDate(date: Date) {
     this.calendarStore.setSelectedDate(date);
     this.calendarStore.setView('week');
+  }
+
+  goToNextMonth() {
+    const date = this.calendarStore.selectedDate() 
+    this.calendarStore.setSelectedDate(addMonths(date, 1));
+
+
+  } 
+  goToPrevMonth() {
+    const date = this.calendarStore.selectedDate() 
+    this.calendarStore.setSelectedDate(subMonths(date, 1));
+
   }
 }

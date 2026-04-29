@@ -2,14 +2,23 @@ import { Component, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { calenderStore } from '../../calender-store/calender-store';
 import { DateService } from '../../services/date.service';
-import { isSameDay, isSameMonth, isToday, subYears } from 'date-fns';
+import { isSameDay, isSameMonth, isToday, subMonths, addMonths } from 'date-fns';
 import { daysLabels } from '../../models/holiday.models';
 import {CreateEventComponent} from '../create-modal/create-event.component';
+import { ButtonModule } from 'primeng/button';
+
 @Component({
     selector: 'monthly-view',
-    imports: [CommonModule, CreateEventComponent],
-    template: `              
-        <h1 class="text-xl font-bold">{{ calendarStore.selectedDate() | date: 'MMMM yyyy' }}</h1>
+    imports: [CommonModule, CreateEventComponent, ButtonModule],
+    template: `     
+    
+    <div class="flex  justify-between m-2">
+             <p-button icon="pi pi-caret-left" (onClick)="goToPrevMonth()">
+            </p-button>
+             <h1 class="text-xl font-bold">{{ calendarStore.selectedDate() | date: 'MMMM yyyy' }}</h1>
+                     <p-button icon="pi pi-caret-right" (onClick)="goToNextMonth()">
+        </p-button>
+</div>
         <div class="grid grid-cols-7 border-t border-l border-gray-300">
             <div class="flex items-center justify-center py-2 border-b border-r border-gray-300" *ngFor="let dayLabel of daysLabels">
                 <strong>{{ dayLabel }}</strong>
@@ -96,4 +105,16 @@ export class MonthlyViewComponent {
     selectEvent(id: string) {
         this.calendarStore.setSelectedEventId(id);
     }
+
+      goToNextMonth() {
+        const date = this.calendarStore.selectedDate() 
+        this.calendarStore.setSelectedDate(addMonths(date, 1));
+    
+    
+      } 
+      goToPrevMonth() {
+        const date = this.calendarStore.selectedDate() 
+        this.calendarStore.setSelectedDate(subMonths(date, 1));
+    
+      }
 }
