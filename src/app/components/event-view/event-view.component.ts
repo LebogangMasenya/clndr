@@ -4,6 +4,7 @@ import { calenderStore } from '../../calender-store/calender-store';
 import { DateService } from '../../services/date.service';
 import { isSameDay, isSameMonth, isToday, subYears } from 'date-fns';
 import { daysLabels, timeLabels } from '../../models/holiday.models';
+import { CalenderEvent } from '../../models/calender-state.models';
 
 @Component({
   selector: 'event-view',
@@ -13,15 +14,16 @@ import { daysLabels, timeLabels } from '../../models/holiday.models';
             <h1 class="text-xl font-bold">{{ eventData()?.title }}</h1>
 
             <section>
-
               {{eventData()?.description}}
-
               <span>{{eventData()?.date | date}}</span>
-
-              </section>
-
-
+            </section>
         </div>
+
+            <div class=" flex justify-baseline">
+
+              <button (click)="deleteEvent(eventData()!.id)"><i class="pi-trash"></i></button>
+              <button (click)="closeEVent()">X</button>
+            </div>
     } @else {
         <div class="flex h-full items-center justify-center text-gray-400 italic">
             Select an event to view details
@@ -45,4 +47,22 @@ export class EventViewComponent {
   dateService = inject(DateService);
 
   eventData =  this.calendarStore.selectedEvent;
+
+
+  editEvent(updateData: CalenderEvent) {
+    if(this.eventData()) {
+      this.calendarStore.updateEvent(this.eventData()!.id, updateData)
+    }
+  }
+
+  deleteEvent(id: string) {
+    
+      this.calendarStore.removeEvent(id)
+      this.calendarStore.setSelectedEventId(null);
+    
+  }
+
+  closeEVent() {
+      this.calendarStore.setSelectedEventId(null);
+  }
 }

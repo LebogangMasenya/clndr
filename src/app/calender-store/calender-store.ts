@@ -61,6 +61,14 @@ export const calenderStore = signalStore(
         },
         removeEvent(eventId: string) {
             patchState(store, removeEntities([eventId]));
+        },
+        updateEvent(eventId: string, updatedData: Partial<CalenderEvent>) {
+            patchState(store, updateAllEntities((event) => {
+                if (event.id === eventId) {
+                    return { ...event, ...updatedData };
+                }
+                return event;
+            }));
         }
     })),
    withHooks({
