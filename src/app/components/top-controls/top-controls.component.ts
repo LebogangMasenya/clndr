@@ -23,17 +23,17 @@ interface SearchResult {
 @Component({
     selector: 'top-controls',
     template: `
-   <div class="flex items-center justify-between p-4 bg-gray-100 border-b w-full">
+   <div class="flex items-center justify-between p-4  border-b w-full">
     <div class="flex items-center gap-2">
         <h1 class="text-xl font-black tracking-tighter text-blue-600">CLNDR.io</h1>
     </div>
 
-    <div class="flex-1 px-6">
+    <div class="flex-1 px-4">
         <p-menubar [model]="items" />
     </div>
 
     <div class="flex items-center gap-3">
-        <p-button icon="pi pi-search" [text]="true" (onClick)="openCommandPalette()"> <span class="text-xs">⌘K</span> </p-button>
+        <p-button icon="pi pi-search" [text]="true" (onClick)="openCommandPalette()">⌘i</p-button>
         <div class="hidden">
             <create-event [(showCreateModal)]="showCreateModal"></create-event>
         </div>
@@ -69,23 +69,25 @@ interface SearchResult {
     </div>
   `,
     styles: `
-      
-        /* Remove PrimeNG's default padding and borders from the menubar component */
-        ::ng-deep .p-menubar {
+    
+    ::ng-deep .p-menubar-item-label {
+        color: blue
+       }
+       
+       ::ng-deep .p-menubar-item-content:hover {
+       background: beige;
+       }
+       ::ng-deep .p-menubar {
+        background: white;
+        width: 80%;
+      }
+    
+      ::ng-deep .p-menubar {
             padding: 0;
             border: none;
-            background: transparent;
+      
         }
-
-        ::ng-deep .p-menubar .p-menuitem-link {
-            color: #333 !important;
-            padding: 0.5rem 1rem;
-        }
-
-        ::ng-deep .p-menubar .p-menuitem-link:hover {
-            background: rgba(0, 0, 0, 0.04) !important;
-            border-radius: 6px;
-        }
+    
   `,
     imports: [MenubarModule, DialogModule, AutoCompleteModule, DatePickerModule, ButtonModule, CommonModule, FormsModule, CreateEventComponent],
     standalone: true
@@ -131,13 +133,6 @@ export class TopControlsComponent {
             command: () => {
                 // Handle year view logic here
                 this.setView('year');
-            }
-        },
-        {
-            label: 'Today',
-            icon: 'pi pi-fw pi-calendar',
-            command: () => {
-                this.setView('today');
             }
         }
     ];
@@ -208,11 +203,10 @@ export class TopControlsComponent {
         this.CalenderStore.setView(view as 'month' | 'week' | 'day' | 'today' | 'year');
     }
 
-    createNew() {
-        this.CalenderStore.addEvent({ id: 'new', title: 'New Event', date: new Date() });
-    }
+
 
     jumpToDate(date: string) {
+        this.CalenderStore.setView('week');
         this.CalenderStore.setSelectedDate(new Date(date));
     }
 
@@ -223,11 +217,11 @@ export class TopControlsComponent {
         const isIPressed = event.key.toLowerCase() === 'i';
         const isModifierPressed = event.metaKey || event.ctrlKey;
 
-        if (isModifierPressed && isKPressed) {
+        if (isModifierPressed && isIPressed) {
             event.preventDefault(); // Stop the browser from opening its own search/address bar
             this.openCommandPalette();
         }
-          if (isModifierPressed && isIPressed) {
+          if (isModifierPressed && isKPressed) {
             event.preventDefault(); // Stop the browser from opening its own search/address bar
             this.openCreateModal();
         }
