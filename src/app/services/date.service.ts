@@ -36,7 +36,7 @@ export class DateService {
 
   public createEvent(title: string, date: Date, description?: string) {
     const newEvent = {
-      id: Math.random().toString(36).substr(2, 9), // Simple unique ID generator
+      id: crypto.randomUUID(),
       title,
       date,
       description

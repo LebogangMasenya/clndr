@@ -16,7 +16,7 @@ import {CreateEventComponent} from '../create-modal/create-event.component';
       <div class="flex h-full flex-col overflow-hidden bg-white">
     
         <div class="flex border-b border-slate-200 flex-none">
-            <div class="w-16 flex-shrink-0 border-r border-slate-100 bg-slate-50"></div> 
+            <div class="w-16 shrink-0 border-r border-slate-100 bg-slate-50"></div> 
             
             <div class="grid flex-1 grid-cols-7">
                 @for (day of calendarDays(); track day.date.toISOString()) {
@@ -51,7 +51,7 @@ import {CreateEventComponent} from '../create-modal/create-event.component';
 
         <div class="flex flex-1 overflow-y-auto">
             
-            <div class="w-16 flex-shrink-0 bg-white border-r border-slate-100 relative pt-2">
+            <div class="w-16 shrink-0 bg-white border-r border-slate-100 relative pt-2">
                 @for (hour of timeLabels; track hour) {
                     <div class="h-12 relative">
                         <span class="absolute -top-2 right-2 text-[10px] text-slate-400 uppercase">
@@ -70,7 +70,7 @@ import {CreateEventComponent} from '../create-modal/create-event.component';
                 </div>
 
                 @for (day of calendarDays(); track day.date.toISOString()) {
-                    <div class="relative h-[1152px] border-r border-slate-100 hover:bg-slate-50/50 transition-colors">
+                    <div class="relative h-288 border-r border-slate-100 hover:bg-slate-50/50 transition-colors">
                     </div>
                 }
 

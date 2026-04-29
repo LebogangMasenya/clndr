@@ -30,16 +30,20 @@ export const calenderStore = signalStore(
         holidayService: inject(HolidayService)
     })),
     withEntities<CalenderEvent>(),
-    withComputed((state) => ({
-        currentViewLabel: state.currentView,
-        selectedDateLabel: state.selectedDate,
-        selectedEventIdLabel: state.selectedEventId,
-        eventsLabel: state.entities,
-        holidayListObject: state.holidayList,
-        monthName: computed(() => format(state.selectedDate(), 'MMMM')), // "January"
-        yearLabel: computed(() => format(state.selectedDate(), 'yyyy')), // "2026"
-        dayNumber: computed(() => format(state.selectedDate(), 'do')),   // "1st", "2nd"
-        displayLabel: computed(() => format(state.selectedDate(), 'MMMM yyyy'))
+    withComputed(({currentView, selectedDate, selectedEventId, entityMap, entities, holidayList}) => ({
+        currentViewLabel: currentView,
+        selectedDateLabel: selectedDate,
+        selectedEventIdLabel: selectedEventId,
+        eventsLabel: entities,
+        selectedEvent: computed(() => {
+            const id = selectedEventId();
+            return id ? entityMap()[id] : null; // Instant lookup, woww
+        }),
+        holidayListObject: holidayList,
+        monthName: computed(() => format(selectedDate(), 'MMMM')), // "January"
+        yearLabel: computed(() => format(selectedDate(), 'yyyy')), // "2026"
+        dayNumber: computed(() => format(selectedDate(), 'do')),   // "1st", "2nd"
+        displayLabel: computed(() => format(selectedDate(), 'MMMM yyyy'))
     })),
     withMethods((store) => ({
         setView(view: 'month' | 'week' | 'day' | 'today' | 'year') {
