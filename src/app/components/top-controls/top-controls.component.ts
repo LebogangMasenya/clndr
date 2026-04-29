@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, inject,ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MenubarModule } from 'primeng/menubar';
 import { MenuItem } from 'primeng/api';
@@ -22,21 +22,22 @@ interface SearchResult {
 
 @Component({
     selector: 'top-controls',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-   <div class="flex items-center justify-between p-4  border-b w-full">
-    <div class="flex items-center gap-2">
+  <div class="flex items-center justify-between p-4 border-b w-full h-16 bg-white flex-none">
+    
+    <div class="flex items-center gap-2 min-w-30">
         <h1 class="text-xl font-black tracking-tighter text-blue-600">CLNDR.io</h1>
     </div>
 
-    <div class="flex-1 px-4">
-        <p-menubar [model]="items" />
+    <div class="flex-1 px-4 overflow-hidden">
+        <p-menubar [model]="items" styleClass="n-menubar" />
     </div>
 
-    <div class="flex items-center gap-3">
-        <p-button icon="pi pi-search" [text]="true" (onClick)="openCommandPalette()">⌘i</p-button>
-        <div class="hidden">
-            <create-event [(showCreateModal)]="showCreateModal"></create-event>
-        </div>
+    <div class="flex items-center gap-3 min-w-25 justify-end">
+        <p-button icon="pi pi-search" [text]="true" (onClick)="openCommandPalette()">
+            <span class="text-xs text-slate-400 ml-2">⌘K</span>
+        </p-button>
     </div>
 
     <p-dialog header="Calendar Command Palette" [(visible)]="showCommandPaletteDialog" appendTo="body" [modal]="true" [closable]="true" [style]="{width: '50vw', height: '30vh'}">
@@ -69,27 +70,34 @@ interface SearchResult {
     </div>
   `,
     styles: `
-    
-    ::ng-deep .p-menubar-item-label {
-        color: blue
-       }
-       
-       ::ng-deep .p-menubar-item-content:hover {
-       background: beige;
-       }
-       ::ng-deep .p-menubar {
-        background: white;
-        width: 80%;
-      }
-    
-      ::ng-deep .p-menubar {
-            padding: 0;
-            border: none;
-      
-        }
+::ng-deep .n-menubar {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    width: 100% !important; /* Changed from 80% to fill the flex-1 container */
+}
+
+::ng-deep .n-menubar .p-menubar-root-list {
+    background: transparent !important;
+}
+
+::ng-deep .n-menubar .p-menuitem-link {
+    padding: 0.5rem 0.75rem !important;
+    color: blue !important;
+}
+
+::ng-deep .n-menubar .p-menubar-item-label {
+    color: #2563eb !important; /* blue-600 */
+    font-weight: 500;
+}
+
+::ng-deep .n-menubar .p-menubar-item-content:hover {
+background-color: rgba(0, 0, 0, 0.03) !important;
+    border-radius: 6px;
+}
     
   `,
-    imports: [MenubarModule, DialogModule, AutoCompleteModule, DatePickerModule, ButtonModule, CommonModule, FormsModule, CreateEventComponent],
+    imports: [MenubarModule, DialogModule, AutoCompleteModule, DatePickerModule, ButtonModule, CommonModule, FormsModule],
     standalone: true
 
 })

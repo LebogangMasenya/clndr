@@ -7,7 +7,8 @@ import {MainViewComponent} from './components/main-view/main-view.component';
 import { calenderStore } from './calender-store/calender-store';
 import { ButtonModule } from 'primeng/button';
 import { DrawerModule } from 'primeng/drawer';
-import { RippleModule } from 'primeng/ripple';@Component({
+import { RippleModule } from 'primeng/ripple';
+@Component({
   selector: 'app-root',
   imports: [RouterOutlet, ButtonModule, DrawerModule, RippleModule, NavSidebarComponent, TopControlsComponent, EventViewComponent, MainViewComponent],
   templateUrl: './app.html',

@@ -103,7 +103,7 @@ import { ButtonModule } from 'primeng/button';
       padding: 1rem;
     }
   `,
-  imports: [CommonModule, ButtonModule, ButtonDirective],
+  imports: [CommonModule, ButtonModule],
 
 })
 export class NavSidebarComponent {
