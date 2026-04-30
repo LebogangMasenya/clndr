@@ -62,25 +62,6 @@ import {CreateEventComponent} from '../create-modal/create-event.component';
                     </div>
                 }
             </div>
-
-            <div class="grid flex-1 grid-cols-7 relative pt-2">
-            
-                <div class="absolute inset-0 pointer-events-none">
-                    @for (hour of timeLabels; track hour) {
-                    <div class="h-12 border-b border-slate-100 w-full"></div>
-                    }
-                </div>
-
-                @for (day of calendarDays(); track day.date.toISOString()) {
-                    <div class="relative h-288 border-r border-slate-100 hover:bg-slate-50/50 transition-colors">
-                    </div>
-                }
-
-                <div class="absolute left-0 right-0 border-t border-red-500 z-20 pointer-events-none flex items-center"
-                    [style.top.px]="currentTimePosition()">
-                    <div class="h-2 w-2 rounded-full bg-red-500 -ml-1"></div>
-                </div>
-            </div>
         </div>
                     <create-event [(showCreateModal)]="showCreateModal"></create-event>
 

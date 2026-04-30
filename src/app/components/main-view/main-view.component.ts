@@ -12,13 +12,22 @@ import {YearViewComponent} from '../year-view/year-view.components';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [CommonModule, FormsModule, WeeklyViewComponent, MonthlyViewComponent, YearViewComponent],
     template: `
-    <div class="flex flex-column h-screen">      
+    <div class="flex flex-column h-screen">  
         <div class="flex-1">
-            <weekly-view *ngIf="calendarStore.currentView() === 'week'"></weekly-view>
-            <monthly-view *ngIf="calendarStore.currentView() === 'month'"></monthly-view>
-            <year-view *ngIf="calendarStore.currentView() === 'year'"></year-view>
+           @switch (calendarStore.currentView()) {
+                @case ('week') {
+                    <weekly-view></weekly-view>
+                }
+                @case ('month') {
+                    <monthly-view></monthly-view>
+                }
+                @case ('year') {
+                    <year-view></year-view>
+                }
+           }
         </div>
-</div>`,
+    </div>
+    `,
 styles: ``
 })
 export class MainViewComponent {

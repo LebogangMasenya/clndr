@@ -21,7 +21,7 @@ import { ButtonModule } from 'primeng/button';
             <p-button icon="pi pi-caret-right" (onClick)="goToNextMonth()">
             </p-button>
         </div>
-        @defer {
+   
         <div class="grid grid-cols-7 border-t border-l border-gray-300">
             <div class="flex items-center justify-center py-2 border-b border-r border-gray-300" *ngFor="let dayLabel of daysLabels">
                 <strong>{{ dayLabel }}</strong>
@@ -56,10 +56,7 @@ import { ButtonModule } from 'primeng/button';
             <create-event [(showCreateModal)]="showCreateModal"></create-event>
         </div>        
          </div>
-        } @placeholder (minimum 500ms) {
-            <div class="grid grid-cols-7">
-            </div>
-        }
+          
         `,
     styles: `
 .hover-button {
