@@ -11,46 +11,70 @@ import {ButtonModule} from 'primeng/button';
 @Component({
     selector: 'create-event',
     template: `
-        <div class="card flex justify-center">
-            <p-toast />
-        </div>
+     
 
         <p-dialog header="New Event" 
             [(visible)]="showCreateModal" 
             [modal]="true" 
             appendTo="body"
             closable="false"
-            [style]="{width: '60vw', height: '20vh'}"
+           [style]="{ width: '450px' }"
             >
-            <div class="flex flex-column gap-3">
-                <div class="flex flex-column gap-2 ">
-                    <label for="title">Event Title</label>
-                    <input pInputText id="title" [(ngModel)]="newEvent.title" />
-                </div>
-                <div class="flex flex-column gap-2">
-                    <label for="date">Date</label>
-                    <p-datePicker id="date" [(ngModel)]="newEvent.date" appendTo="body"></p-datePicker>
+           <div class="flex flex-col gap-4 p-fluid py-2">
+        
+                <div class="flex flex-col gap-1">
+                    <label for="title" class="text-sm font-medium text-gray-700">Event Title</label>
+                    <input pInputText id="title" [(ngModel)]="newEvent.title" placeholder="Enter event title" />
                 </div>
 
-                <div class="flex flex-column gap-2">
-                    <label for="description">Description (optional)</label>
-                    <textarea pInputText id="description" [(ngModel)]="newEvent.description"></textarea>
+                <div class="flex flex-col gap-1">
+                    <label for="date" class="text-sm font-medium text-gray-700">Date</label>
+                    <p-datePicker id="date" [(ngModel)]="newEvent.date" appendTo="body" />
                 </div>
 
-                <div class="flex justify-end gap-2 mt-4">
-                    <button pButton label="Cancel" class="p-button-secondary" (click)="closeModal()"></button>
-                    <button pButton label="Save" (click)="saveEvent()"></button>
+                <div class="flex flex-col gap-1">
+                    <label for="description" class="text-sm font-medium text-gray-700">Description (optional)</label>
+                    <textarea 
+                        pInputTextarea 
+                        id="description" 
+                        [(ngModel)]="newEvent.description" 
+                        rows="3" 
+                        class="resize-none"
+                        placeholder="Enter description..."></textarea>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-4">
+                    <button 
+                        pButton 
+                        label="Cancel" 
+                        icon="pi pi-times"
+                        class="p-button-secondary p-button-text" 
+                        (click)="closeModal()">
+                    </button>
+                    <button 
+                        pButton 
+                        label="Save" 
+                        icon="pi pi-check"
+                        (click)="saveEvent()">
+                    </button>
                 </div>
             </div>
+
+            <div class="flex justify-center mt-2">
+                <p-toast position="top-center" />
+            </div>
+
+
+
         </p-dialog>
     `,
     styles: `
-    :host {
-      display: block;
-      width: 200px;
-      background-color: #f0f0f0;
-      padding: 1rem;
+    ::ng-deep .p-dialog {
+        background: white;
+        color: black;
+        border-radius: 16px;
     }
+
   `,
     imports: [DialogModule, DatePickerModule, FormsModule, ToastModule, ButtonModule],
     standalone: true,

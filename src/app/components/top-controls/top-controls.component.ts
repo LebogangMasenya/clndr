@@ -12,6 +12,7 @@ import { ButtonModule } from 'primeng/button';
 import { DrawerModule } from 'primeng/drawer';
 import { FormsModule } from '@angular/forms';
 import { HostListener } from '@angular/core';
+import { CreateEventComponent } from '../create-modal/create-event.component';
 interface SearchResult {
     label: string;
     icon: string;
@@ -45,6 +46,10 @@ interface SearchResult {
             <span class="text-xs text-slate-400 ml-2">⌘K</span>
         </p-button>
 
+              <div class="hidden">
+            <create-event [(showCreateModal)]="showCreateModal"></create-event>
+        </div>  
+
     </div>
 
     <p-dialog header="Calendar Command Palette" [(visible)]="showCommandPaletteDialog" appendTo="body" [modal]="true" [closable]="true" [style]="{width: '50vw', height: '30vh'}">
@@ -72,10 +77,6 @@ interface SearchResult {
             </ng-template>
         </p-autocomplete>
     </p-dialog>
-
-
-
-
     </div>
 
 <p-drawer [(visible)]="mobileMenuVisible" position="top" [modal]="false" [style]="{height: 'auto'}"> 
@@ -99,6 +100,9 @@ interface SearchResult {
         </ul>
     </ng-template>
 </p-drawer>
+
+     
+      
   `,
     styles: `
 ::ng-deep .n-menubar {
@@ -128,7 +132,7 @@ background-color: rgba(0, 0, 0, 0.03) !important;
 }
     
   `,
-    imports: [MenubarModule, DialogModule, AutoCompleteModule, DatePickerModule, ButtonModule, CommonModule, FormsModule, DrawerModule],
+    imports: [MenubarModule, DialogModule, AutoCompleteModule, DatePickerModule, ButtonModule, CommonModule, FormsModule, DrawerModule, CreateEventComponent],
     standalone: true
 })
 export class TopControlsComponent {
@@ -193,9 +197,11 @@ export class TopControlsComponent {
     }
 
     openCreateModal() {
+       this.zone.run(() => {
         this.showCommandPaletteDialog = false;
-
         this.showCreateModal = true;
+        this.cdr.markForCheck();
+       })
     }
 
     search(event: AutoCompleteCompleteEvent) {
@@ -253,17 +259,21 @@ export class TopControlsComponent {
         const isModifierPressed = event.metaKey || event.ctrlKey;
 
         if (isModifierPressed && isIPressed) {
-            event.preventDefault(); // Stop the browser from opening its own search/address bar
-            this.openCommandPalette();
+            event.preventDefault();
+            this.zone.run(() => {
+                this.openCommandPalette();
+                this.cdr.markForCheck();
+            });
         }
+
         if (isModifierPressed && isKPressed) {
-            event.preventDefault(); // Stop the browser from opening its own search/address bar
+            event.preventDefault(); // Prevents browser-level search bar from popping up
             this.openCreateModal();
         }
 
-
         if (event.key === 'Escape' && this.showCommandPaletteDialog) {
             this.showCommandPaletteDialog = false;
+            this.cdr.markForCheck();
         }
     }
 }

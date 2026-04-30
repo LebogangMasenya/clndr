@@ -7,6 +7,7 @@ import { daysLabels } from '../../models/holiday.models';
 import {CreateEventComponent} from '../create-modal/create-event.component';
 import { ButtonModule } from 'primeng/button';
 
+
 @Component({
     selector: 'monthly-view',
     imports: [CommonModule, CreateEventComponent, ButtonModule],
