@@ -2,7 +2,7 @@ import { Component, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { calenderStore } from '../../calender-store/calender-store';
 import { DateService } from '../../services/date.service';
-import { isSameDay, isSameMonth, isToday, subYears, format } from 'date-fns';
+import { isSameDay, isToday, format } from 'date-fns';
 import { daysLabels, monthsLabels } from '../../models/holiday.models';
 
 

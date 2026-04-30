@@ -36,6 +36,12 @@
           },
           "configurations": {
             "production": {
+              "optimization": {
+      "styles": {
+        "minify": true,
+        "inlineCritical": true 
+      }
+    },
               "budgets": [
                 {
                   "type": "initial",

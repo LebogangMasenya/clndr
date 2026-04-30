@@ -2,8 +2,6 @@ import { Component, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { calenderStore } from '../../calender-store/calender-store';
 import { DateService } from '../../services/date.service';
-import { isSameDay, isSameMonth, isToday, subYears } from 'date-fns';
-import { daysLabels, timeLabels } from '../../models/holiday.models';
 import { CalenderEvent } from '../../models/calender-state.models';
 
 @Component({
