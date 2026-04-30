@@ -1,4 +1,4 @@
-import { Component, inject,ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MenubarModule } from 'primeng/menubar';
 import { MenuItem } from 'primeng/api';
@@ -9,9 +9,9 @@ import { Holiday } from '../../models/holiday.models';
 import { calenderStore } from '../../calender-store/calender-store';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ButtonModule } from 'primeng/button';
+import { DrawerModule } from 'primeng/drawer';
 import { FormsModule } from '@angular/forms';
 import { HostListener } from '@angular/core';
-import {CreateEventComponent} from '../create-modal/create-event.component';
 interface SearchResult {
     label: string;
     icon: string;
@@ -30,14 +30,21 @@ interface SearchResult {
         <h1 class="text-xl font-black tracking-tighter text-blue-600">CLNDR.io</h1>
     </div>
 
-    <div class="flex-1 px-4 overflow-hidden">
-        <p-menubar [model]="items" styleClass="n-menubar" />
+    <div class="hidden md:flex flex-1 px-4 overflow-hidden">
+        <p-menubar [model]="items" class="n-menubar" />
     </div>
+
+    <div class="md:hidden flex items-center">
+        <p-button icon="pi pi-bars" [text]="true" severity="secondary" (onClick)="mobileMenuVisible =true" >
+        </p-button>
+    </div>
+
 
     <div class="flex items-center gap-3 min-w-25 justify-end">
         <p-button icon="pi pi-search" [text]="true" (onClick)="openCommandPalette()">
             <span class="text-xs text-slate-400 ml-2">⌘K</span>
         </p-button>
+
     </div>
 
     <p-dialog header="Calendar Command Palette" [(visible)]="showCommandPaletteDialog" appendTo="body" [modal]="true" [closable]="true" [style]="{width: '50vw', height: '30vh'}">
@@ -67,14 +74,38 @@ interface SearchResult {
     </p-dialog>
 
 
+
+
     </div>
+
+<p-drawer [(visible)]="mobileMenuVisible" position="top" [modal]="false" [style]="{height: 'auto'}"> 
+    <ng-template pTemplate="content">
+        <ul class="flex flex-col gap-1 py-4">
+            @for (item of items; track item.label) {
+                <li>
+                    <button 
+                        type="button"
+                        (click)="executeCommand(item, $event)"
+                        class="w-full text-left flex items-center gap-3 p-3 m-0 rounded-md hover:bg-slate-50 transition-colors cursor-pointer border-0 bg-transparent group">
+                        
+                        <i [class]="item.icon + ' text-slate-500 group-hover:text-slate-700'"></i>
+                        
+                        <span class="text-sm font-medium text-slate-700 group-hover:text-slate-900">
+                            {{ item.label }}
+                        </span>
+                    </button>
+                </li>
+            }
+        </ul>
+    </ng-template>
+</p-drawer>
   `,
     styles: `
 ::ng-deep .n-menubar {
     background: transparent !important;
     border: none !important;
     padding: 0 !important;
-    width: 100% !important; /* Changed from 80% to fill the flex-1 container */
+    width: 100% !important; 
 }
 
 ::ng-deep .n-menubar .p-menubar-root-list {
@@ -87,7 +118,7 @@ interface SearchResult {
 }
 
 ::ng-deep .n-menubar .p-menubar-item-label {
-    color: #2563eb !important; /* blue-600 */
+    color: #2563eb !important; 
     font-weight: 500;
 }
 
@@ -97,13 +128,14 @@ background-color: rgba(0, 0, 0, 0.03) !important;
 }
     
   `,
-    imports: [MenubarModule, DialogModule, AutoCompleteModule, DatePickerModule, ButtonModule, CommonModule, FormsModule],
+    imports: [MenubarModule, DialogModule, AutoCompleteModule, DatePickerModule, ButtonModule, CommonModule, FormsModule, DrawerModule],
     standalone: true
-
 })
 export class TopControlsComponent {
     HolidayService = inject(HolidayService);
     CalenderStore = inject(calenderStore);
+    private cdr = inject(ChangeDetectorRef);
+    private zone = inject(NgZone);
 
     Holidays: Holiday[] = [];
     suggestedItems: any[] = [];
@@ -111,6 +143,7 @@ export class TopControlsComponent {
 
     showCommandPaletteDialog: boolean = false;
     showCreateModal: boolean = false;
+    mobileMenuVisible: boolean = false;
 
     ngOnInit() {
         const currentYear = 2025;
@@ -131,7 +164,6 @@ export class TopControlsComponent {
             label: 'Month',
             icon: 'pi pi-fw pi-calendar',
             command: () => {
-                // Handle month view logic here
                 this.setView('month');
             }
         },
@@ -139,27 +171,21 @@ export class TopControlsComponent {
             label: 'Year',
             icon: 'pi pi-fw pi-calendar',
             command: () => {
-                // Handle year view logic here
                 this.setView('year');
             }
         }
     ];
 
-    newEvent = {
-        title: '',
-        date: new Date()
-    };
+    executeCommand(item: MenuItem, event: Event) {
+        this.zone.run(() => {
+            if(item.command) {
+                item.command({originalEvent: event, item: item})
+            }
 
-    saveEvent() {
-        const eventToAdd = {
-            id: Math.random().toString(36).substring(2, 9), // Simple unique ID generator
-            title: this.newEvent.title,
-            date: this.newEvent.date
-        };
-        this.CalenderStore.addEvent(eventToAdd);
-        this.showCreateModal = false;
-        // Reset form
-        this.newEvent = { title: '', date: new Date() };
+            this.mobileMenuVisible = false;
+
+            this.cdr.markForCheck()
+        })
     }
 
     openCommandPalette() {
@@ -209,6 +235,7 @@ export class TopControlsComponent {
 
     setView(view: string) {
         this.CalenderStore.setView(view as 'month' | 'week' | 'day' | 'today' | 'year');
+        this.cdr.markForCheck();
     }
 
 
@@ -229,7 +256,7 @@ export class TopControlsComponent {
             event.preventDefault(); // Stop the browser from opening its own search/address bar
             this.openCommandPalette();
         }
-          if (isModifierPressed && isKPressed) {
+        if (isModifierPressed && isKPressed) {
             event.preventDefault(); // Stop the browser from opening its own search/address bar
             this.openCreateModal();
         }
